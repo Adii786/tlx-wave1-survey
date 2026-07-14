@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TLX Satisfaction Survey — Wave 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --navy:#12314f; --navy-deep:#0b2136; --steel:#3b5a78; --gold:#c99a3c; --gold-soft:#e9d19f;
+    --paper:#f6f3ec; --card:#ffffff; --ink:#1d2a37; --ink-soft:#5c6b7a; --line:#e2ddd0;
+    --green:#2f8f5b; --amber:#c98a1f; --red:#c0392b; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(180deg,#eef1f4 0%, var(--paper) 260px);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;}
+  .urdu{font-family:'Noto Nastaliq Urdu','Jameel Noori Nastaleeq',serif;direction:rtl;line-height:2.1;}
+  .shell{max-width:820px;margin:0 auto;padding:0 18px 60px;}
+  header.topbar{background:linear-gradient(135deg,var(--navy) 0%, var(--navy-deep) 100%);color:#fff;padding:24px 22px 20px;border-radius:0 0 22px 22px;box-shadow:0 6px 24px rgba(11,33,54,.25);position:relative;overflow:hidden;}
+  header.topbar::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg, rgba(201,154,60,.08) 0 2px, transparent 2px 26px);pointer-events:none;}
+  .brand-row{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1;}
+  .brand-mark{width:44px;height:44px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:800;color:var(--navy-deep);font-size:18px;flex:none;}
+  .brand-text-en{font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-soft);}
+  .brand-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:19px;margin:2px 0 0;}
+  .brand-title-ur{margin-top:5px;font-size:18px;}
+  #adminLinkBtn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:12px;padding:7px 12px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;}
+  #adminLinkBtn:hover{background:rgba(255,255,255,.2);}
+  .wave-tag{margin-top:12px;display:inline-flex;align-items:center;gap:6px;background:rgba(201,154,60,.18);border:1px solid rgba(233,209,159,.4);color:var(--gold-soft);font-size:11.5px;padding:5px 12px;border-radius:20px;position:relative;z-index:1;}
+
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:0 2px 10px rgba(29,42,55,.06);border:1px solid var(--line);padding:22px;margin-top:18px;}
+  .card h2.ur{font-size:19px;margin:0 0 16px;}
+  label.field-label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:6px;font-weight:600;}
+  label.field-label .ur-sub{display:block;font-family:'Noto Nastaliq Urdu',serif;direction:rtl;font-size:15px;color:var(--ink);margin-top:2px;font-weight:400;}
+  input[type=text]{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;font-family:'Noto Nastaliq Urdu','Inter',sans-serif;background:#fbfaf7;color:var(--ink);}
+  input[type=text]:focus{outline:none;border-color:var(--gold);background:#fff;}
+  .top-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:560px){.top-grid{grid-template-columns:1fr;}}
+
+  .role-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px;}
+  @media(max-width:560px){.role-tabs{grid-template-columns:1fr 1fr;}}
+  .role-tab{border:1.5px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;background:#fbfaf7;position:relative;}
+  .role-tab:hover{border-color:var(--gold);}
+  .role-tab.active{background:var(--navy);border-color:var(--navy);}
+  .role-tab .en{font-family:'Poppins',sans-serif;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);}
+  .role-tab.active .en{color:var(--gold-soft);}
+  .role-tab .ur{font-size:16px;margin-top:2px;}
+  .role-tab.active .ur{color:#fff;}
+  .role-tab .badge{position:absolute;top:-7px;right:-7px;background:var(--green);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-family:'Inter',sans-serif;font-weight:700;}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:10px;border:none;cursor:pointer;font-size:14.5px;font-weight:600;font-family:'Inter',sans-serif;transition:transform .08s ease;}
+  .btn:active{transform:scale(.98);}
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:hover{background:var(--navy-deep);}
+  .btn-primary:disabled{background:#b7c0c9;cursor:not-allowed;}
+  .btn-gold{background:var(--gold);color:var(--navy-deep);}
+  .btn-ghost{background:transparent;color:var(--navy);border:1.5px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--navy);}
+  .btn-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+
+  .qblock{border-bottom:1px solid var(--line);padding:16px 0;}
+  .qblock:first-of-type{padding-top:0;}
+  .qblock:last-of-type{border-bottom:none;}
+  .qtext-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
+  .qnum{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:700;font-family:'Inter',sans-serif;flex:none;}
+  .qtext{font-size:16.5px;flex:1;}
+  .scale{display:flex;gap:6px;}
+  .scale-opt{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 3px 10px;border:1.5px solid var(--line);border-radius:10px;background:#fbfaf7;cursor:pointer;}
+  .scale-opt:hover{border-color:var(--gold);}
+  .scale-opt .num{font-weight:700;font-size:14px;font-family:'Inter',sans-serif;color:var(--ink-soft);}
+  .scale-opt .cap{font-family:'Noto Nastaliq Urdu',serif;font-size:10.5px;line-height:1.35;text-align:center;color:var(--ink-soft);min-height:28px;display:flex;align-items:center;}
+  .scale-opt.sel{background:var(--navy);border-color:var(--navy);}
+  .scale-opt.sel .num,.scale-opt.sel .cap{color:#fff;}
+
+  textarea{width:100%;min-height:100px;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-family:'Noto Nastaliq Urdu','Inter',sans-serif;font-size:16px;background:#fbfaf7;resize:vertical;}
+  textarea:focus{outline:none;border-color:var(--gold);background:#fff;}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy-deep);color:#fff;padding:13px 22px;border-radius:30px;font-size:14px;box-shadow:0 8px 20px rgba(0,0,0,.25);z-index:60;display:flex;align-items:center;gap:8px;}
+  .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+  .context-strip{display:flex;gap:8px;flex-wrap:wrap;background:#f1ede2;border-radius:10px;padding:9px 12px;margin-bottom:16px;font-size:12.5px;color:var(--ink-soft);}
+  .context-strip b{color:var(--ink);}
+  .hint{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:6px;}
+
+  #adminModal, #adminView{display:none;}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(11,33,54,.55);display:flex;align-items:center;justify-content:center;z-index:80;padding:20px;}
+  .modal-box{background:#fff;border-radius:16px;padding:26px;max-width:340px;width:100%;text-align:center;}
+  .modal-box h3{font-family:'Poppins',sans-serif;margin:0 0 6px;color:var(--navy);}
+  .modal-box p{font-size:13px;color:var(--ink-soft);margin:0 0 16px;}
+  .modal-box input{width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--line);text-align:center;font-size:20px;letter-spacing:4px;font-family:'Poppins',sans-serif;margin-bottom:12px;}
+  .modal-err{color:var(--red);font-size:12px;margin-bottom:10px;min-height:14px;}
+
+  .admin-shell{max-width:1080px;margin:0 auto;padding:24px 18px 60px;font-family:'Inter',sans-serif;}
+  .admin-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:22px;}
+  .admin-top h1{font-family:'Poppins',sans-serif;font-size:22px;color:var(--navy);margin:0;}
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+  @media(max-width:760px){.kpi-row{grid-template-columns:1fr 1fr;}}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;}
+  .kpi .val{font-family:'Poppins',sans-serif;font-size:26px;font-weight:700;color:var(--navy);}
+  .kpi .lbl{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  .admin-section{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:20px;}
+  .admin-section h2{font-family:'Poppins',sans-serif;font-size:15px;color:var(--navy);margin:0 0 14px;}
+  .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .filters select{padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);font-size:13px;font-family:'Inter',sans-serif;}
+  table.admin-table{width:100%;border-collapse:collapse;font-size:13px;}
+  table.admin-table th{text-align:left;color:var(--ink-soft);font-weight:600;padding:8px 10px;border-bottom:2px solid var(--line);white-space:nowrap;}
+  table.admin-table td{padding:8px 10px;border-bottom:1px solid var(--line);}
+  table.admin-table tr:hover td{background:#faf9f5;}
+  .barrow{margin-bottom:10px;}
+  .barrow .qline{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;}
+  .barrow .qline b{color:var(--navy);}
+  .bar-track{height:9px;background:#eee;border-radius:6px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:6px;}
+  .feedback-item{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;background:#fbfaf7;}
+  .feedback-item .meta{display:flex;gap:8px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-soft);margin-bottom:6px;}
+  .feedback-item .meta b{color:var(--navy);}
+  .feedback-item .txt{font-family:'Noto Nastaliq Urdu',serif;direction:rtl;font-size:16px;color:var(--ink);}
+  .pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+  .pill.KPO{background:#e4ecf5;color:#28486f;}
+  .pill.DIST{background:#eee4f5;color:#5a2f8a;}
+  .pill.OB{background:#f5edda;color:#8a6a1f;}
+  .pill.TSS{background:#e2f0e6;color:#256b41;}
+  .empty-note{font-size:13px;color:var(--ink-soft);text-align:center;padding:20px;}
+  .admin-actions{display:flex;gap:10px;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+
+<div id="formScreen">
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand-row">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="brand-mark">D</div>
+          <div>
+            <div class="brand-text-en">Dollar Industries Limited · TLX</div>
+            <div class="brand-title">Satisfaction &amp; Evaluation Survey</div>
+            <div class="brand-title-ur urdu" style="color:#fff;">اطمینان اور جائزہ سروے</div>
+          </div>
+        </div>
+        <button id="adminLinkBtn" onclick="openAdminModal()">Admin ⚙</button>
+      </div>
+      <div class="wave-tag">Wave 1 · KPO / Distributor / Order Booker / TSS</div>
+    </header>
+
+    <div class="card">
+      <div class="top-grid">
+        <div>
+          <label class="field-label">Distributor Name<span class="ur-sub">ڈسٹری بیوٹر کا نام</span></label>
+          <input type="text" id="distInput" placeholder="ڈسٹری بیوٹر کا نام لکھیں">
+        </div>
+        <div>
+          <label class="field-label">Your Name (TSS)<span class="ur-sub">آپ کا نام (ٹی ایس ایس)</span></label>
+          <input type="text" id="tssInput" placeholder="اپنا نام لکھیں">
+        </div>
+      </div>
+      <div class="role-tabs" id="roleTabs"></div>
+      <div class="hint">اوپر صارف کی قسم منتخب کریں تاکہ متعلقہ سوالات ظاہر ہوں</div>
+    </div>
+
+    <div id="qCardHost"></div>
+  </div>
+</div>
+
+<div id="adminModal">
+  <div class="modal-backdrop" onclick="if(event.target===this)closeAdminModal()">
+    <div class="modal-box">
+      <h3>Admin Access</h3>
+      <p>Enter the head-office PIN to view the dashboard.</p>
+      <input type="password" id="pinInput" maxlength="6" placeholder="••••" inputmode="numeric">
+      <div class="modal-err" id="pinErr"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeAdminModal()">Cancel</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="checkPin()">Enter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="adminView"><div class="admin-shell" id="adminShell"></div></div>
+<div id="toastHost"></div>
+
+<script>
+/* ================= SUPABASE CONFIG =================
+   1. Create a free project at https://supabase.com
+   2. In the SQL editor, run the CREATE TABLE + POLICY statements
+      provided separately (see setup notes).
+   3. Project Settings → API → paste your Project URL and anon public key below.
+====================================================== */
+const SUPABASE_URL = "https://kpfixagyaahynhielasw.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwZml4YWd5YWFoeW5oaWVsYXN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwMDUyNjcsImV4cCI6MjA5OTU4MTI2N30.4FY2Zyclz7XRoDsc94GmdMVSbF-4KPplK75k64h5i2c";
+const TABLE = "tlx_csat_submissions";
+const supabaseClient = (SUPABASE_URL.startsWith("http"))
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+const ADMIN_PIN = "4470"; // change to your preferred PIN
+
+const ROLE_LABELS = {
+  KPO:  {ur:"کے پی او", en:"KPO"},
+  DIST: {ur:"ڈسٹری بیوٹر", en:"Distributor"},
+  OB:   {ur:"آرڈر بکر", en:"Order Booker"},
+  TSS:  {ur:"ٹی ایس ایس", en:"TSS"}
+};
+
+const QUESTIONS = {
+  KPO: [
+    {ur:"کیا آپ TLX سسٹم میں آرڈرز کے اجراء اور تصفیے کے عمل سے مطمئن ہیں؟", en:"Satisfaction with order issuance & settlement process"},
+    {ur:"کیا TLX سافٹ ویئر آپ کے روزمرہ آپریشنل کاموں کو مکمل کرنے کے لیے صارف دوست ہے؟", en:"TLX software user-friendliness for daily operations"},
+    {ur:"کیا آپ TLX سسٹم میں ادائیگی اور وصولی کے عمل سے مطمئن ہیں؟", en:"Satisfaction with payments & collection process"},
+    {ur:"کیا آپ کو سوالات/مسائل پر بروقت جواب ملتا ہے؟", en:"Timeliness of response on queries/issues"},
+    {ur:"کیا آپ سسٹم میں دستیاب رپورٹس سے مطمئن ہیں اور یہ آپ کی آپریشنل ضروریات پوری کرتی ہیں؟", en:"Satisfaction with reports fulfilling operational needs"},
+    {ur:"کیا آپ سسٹم اپ گریڈ اور نئی تبدیلیوں کے بروقت اپڈیٹس سے مطمئن ہیں؟", en:"Satisfaction with timely updates on system upgrades/changes"},
+    {ur:"کیا آپ TLX سسٹم میں پرچیز آرڈر، بک آرڈر اور وصولی کے عمل سے مطمئن ہیں؟", en:"Satisfaction with PO, book order & receiving process"},
+    {ur:"کیا آپ TLX سسٹم میں مسائل کے حل اور مسائل کے دوبارہ پیش آنے کی صورتحال سے مطمئن ہیں؟", en:"Satisfaction with issue resolution & recurrence handling"},
+    {ur:"کیا آپ سیلز ریٹرن کے عمل اور کسٹمر لیجر کے تصفیے سے مطمئن ہیں؟", en:"Satisfaction with sales return process & ledger settlement"}
+  ],
+  DIST: [
+    {ur:"کیا آپ TLX سافٹ ویئر کے استعمال سے مطمئن ہیں؟ کیا نفاذ کے بعد آپ کے آپریشنز میں بہتری آئی ہے؟", en:"Overall satisfaction using TLX / smoother operations"},
+    {ur:"کیا آپ سسٹم میں اسٹاک پوزیشن سے مطمئن ہیں؟ کیا یہ آپ کے فزیکل اسٹاک سے میچ کرتا ہے؟", en:"Satisfaction with stock position accuracy vs physical"},
+    {ur:"کیا آپ سسٹم میں کسٹمر لیجر سے مطمئن ہیں؟ کیا یہ مارکیٹ سے آؤٹ اسٹینڈنگ اور ریکوری میں مددگار ہے؟", en:"Satisfaction with customer ledger helping outstanding/recovery"},
+    {ur:"کیا آپ سسٹم میں دستیاب رپورٹس سے مطمئن ہیں؟ کیا یہ آپریشنز، ایف بی آر جمع کرانے یا ROI ڈیٹا میں مددگار ہیں؟", en:"Satisfaction with reports (operations/FBR/ROI)"},
+    {ur:"کیا اس سسٹم کے نفاذ کے بعد آپ کے کام اور آپریشنل معاملات میں کارکردگی بہتر ہوئی ہے؟", en:"Efficiency improvement after implementation"},
+    {ur:"آپ سسٹم پر کتنا انحصار کرتے ہیں؟ کیا ڈیٹا قابلِ اعتماد ہے اور آپ اسے مکمل استعمال کر رہے ہیں؟", en:"System dependency & data reliability/utilization"}
+  ],
+  OB: [
+    {ur:"کیا آپ ایپلیکیشن کے ذریعے آرڈر لینے کے عمل سے مطمئن ہیں؟", en:"Satisfaction with order taking process via app"},
+    {ur:"کیا آپ ایپلیکیشن میں لائیو اسٹاک کی درستگی سے مطمئن ہیں؟", en:"Accuracy of live stock visibility in app"},
+    {ur:"کیا آرڈرز بروقت ایپلیکیشن سے سنک ہوتے ہیں؟", en:"Timeliness of order sync from app"},
+    {ur:"کیا آپ ایپلیکیشن کی کارکردگی سے مطمئن ہیں؟ (سست روی، پراڈکٹ لوڈنگ، ایپ کریش وغیرہ)", en:"App performance (slowness/loading/crash)"},
+    {ur:"کیا آپ ایپلیکیشن میں دستیاب رپورٹس سے مطمئن ہیں؟ (روزانہ یا MTD پیش رفت)", en:"Satisfaction with available reports (daily/MTD progress)"},
+    {ur:"کیا آپ ایپ میں PJP یا دکانوں کے ظاہر ہونے سے مطمئن ہیں؟", en:"Satisfaction with PJP/shops appearing in app"},
+    {ur:"کیا آپ ایپ کے استحکام سے مطمئن ہیں؟", en:"Satisfaction with app stability"}
+  ],
+  TSS: [
+    {ur:"کیا آپ TLX سافٹ ویئر کی مجموعی کارکردگی، بھروسے اور ڈیٹا کی درستگی سے مطمئن ہیں؟", en:"Overall TLX performance, reliability, data accuracy"},
+    {ur:"کیا آپ سوالات/مسائل کے حل اور بروقت جواب سے مطمئن ہیں؟", en:"Resolution & timely response of queries/issues"},
+    {ur:"کیا آپ سسٹم رپورٹس سے مطمئن ہیں جو سیلز تجزیے، ٹیم مانیٹرنگ اور ڈسٹری بیوٹر ROI میں مددگار ہوں؟", en:"System reports helpful for sales analytics/team monitoring/distributor ROI"},
+    {ur:"کیا آپ سسٹم میں اسٹاک پوزیشن اور کسٹمر لیجرز سے مطمئن ہیں؟", en:"Satisfaction with stock position & customer ledgers"},
+    {ur:"کیا آپ نئی دکان کھولنے اور ٹیگنگ کے عمل سے مطمئن ہیں؟", en:"Satisfaction with new shop opening & tagging process"},
+    {ur:"کیا آپ TLX سسٹم کے پرچیز آرڈر اور منظوری کے عمل سے مطمئن ہیں؟", en:"Satisfaction with PO & approval process"}
+  ]
+};
+
+const SCALE = [
+  {v:1, ur:"بہت غیر مطمئن"},
+  {v:2, ur:"غیر مطمئن"},
+  {v:3, ur:"غیر جانبدار"},
+  {v:4, ur:"مطمئن"},
+  {v:5, ur:"بہت مطمئن"}
+];
+
+let session = { distributor:"", tssName:"", role:null, userName:"", answers:{}, feedback:"" };
+let progress = { KPO:false, DIST:false, OB:0, TSS:false };
+
+function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
+function showToast(msg){
+  const host=document.getElementById('toastHost');
+  const t=el(`<div class="toast"><span class="dot"></span><span>${msg}</span></div>`);
+  host.appendChild(t);
+  setTimeout(()=>t.remove(),2600);
+}
+
+async function loadSubmissions(){
+  if(!supabaseClient){ showToast('Supabase not configured yet'); return []; }
+  const { data, error } = await supabaseClient.from(TABLE).select('*').order('ts',{ascending:false});
+  if(error){ console.error(error); showToast('Error loading data'); return []; }
+  return data.map(r=>({
+    id:r.id, distributor:r.distributor, tssName:r.tss_name, role:r.role,
+    userName:r.user_name, answers:r.answers, feedback:r.feedback, ts:r.ts
+  }));
+}
+async function insertSubmission(entry){
+  if(!supabaseClient){ showToast('Supabase not configured yet'); return false; }
+  const { error } = await supabaseClient.from(TABLE).insert([{
+    id: entry.id, distributor: entry.distributor, tss_name: entry.tssName, role: entry.role,
+    user_name: entry.userName, answers: entry.answers, feedback: entry.feedback, ts: entry.ts
+  }]);
+  if(error){ console.error(error); return false; }
+  return true;
+}
+function uid(){ return 'S'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+/* ================= ROLE TABS ================= */
+function renderRoleTabs(){
+  const wrap = document.getElementById('roleTabs');
+  wrap.innerHTML = "";
+  Object.keys(ROLE_LABELS).forEach(key=>{
+    const r = ROLE_LABELS[key];
+    const active = session.role===key;
+    let badge = "";
+    if(key==="OB" && progress.OB>0) badge = `<div class="badge">${progress.OB}</div>`;
+    else if(key!=="OB" && progress[key]) badge = `<div class="badge">✓</div>`;
+    const tab = el(`
+      <div class="role-tab ${active?'active':''}">
+        ${badge}
+        <div class="en">${r.en}</div>
+        <div class="ur">${r.ur}</div>
+      </div>
+    `);
+    tab.onclick = ()=>{
+      session.role = key; session.userName=""; session.answers={}; session.feedback="";
+      renderRoleTabs(); renderQuestionCard();
+    };
+    wrap.appendChild(tab);
+  });
+}
+
+/* ================= QUESTION CARD ================= */
+function renderQuestionCard(){
+  const host = document.getElementById('qCardHost');
+  host.innerHTML = "";
+  if(!session.role) return;
+
+  const role = session.role;
+  const rl = ROLE_LABELS[role];
+  const qs = QUESTIONS[role];
+  const namePlaceholder = {
+    KPO:"کے پی او کا نام لکھیں", DIST:"ڈسٹری بیوٹر کے نمائندے کا نام لکھیں",
+    OB:"آرڈر بکر کا نام لکھیں", TSS:"ٹی ایس ایس کا نام لکھیں"
+  }[role];
+
+  const card = el(`
+    <div class="card">
+      <h2 class="ur">${rl.ur} کے سوالات</h2>
+      <div class="context-strip">
+        <span>Distributor: <b id="ctxDist">—</b></span><span>·</span>
+        <span>Role: <b>${rl.en}</b></span>
+      </div>
+      <div style="margin-bottom:18px;">
+        <label class="field-label">Name of ${rl.en}<span class="ur-sub">${namePlaceholder}</span></label>
+        <input type="text" id="userNameInput" placeholder="${namePlaceholder}">
+      </div>
+      <div id="qWrap"></div>
+      <div style="margin-top:6px;">
+        <label class="field-label">Additional Comments (optional)<span class="ur-sub">اضافی رائے یا تجاویز (اختیاری)</span></label>
+        <textarea id="feedbackInput" placeholder="اپنی رائے یہاں لکھیں..." class="urdu"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="submitBtn" disabled>جمع کروائیں / Submit</button>
+      </div>
+    </div>
+  `);
+  host.appendChild(card);
+  card.querySelector('#ctxDist').textContent = session.distributor || '—';
+
+  const qWrap = card.querySelector('#qWrap');
+  qs.forEach((q,i)=>{
+    const block = el(`
+      <div class="qblock">
+        <div class="qtext-row">
+          <div class="qnum">${i+1}</div>
+          <div class="qtext urdu">${q.ur}</div>
+        </div>
+        <div class="scale" data-qidx="${i}"></div>
+      </div>
+    `);
+    const scaleWrap = block.querySelector('.scale');
+    SCALE.forEach(s=>{
+      const b = el(`<div class="scale-opt"><span class="num">${s.v}</span><span class="cap urdu">${s.ur}</span></div>`);
+      b.onclick = ()=>{
+        session.answers[i] = s.v;
+        scaleWrap.querySelectorAll('.scale-opt').forEach(x=>x.classList.remove('sel'));
+        b.classList.add('sel');
+        checkComplete();
+      };
+      scaleWrap.appendChild(b);
+    });
+    qWrap.appendChild(block);
+  });
+
+  function checkComplete(){
+    const distOk = document.getElementById('distInput').value.trim().length>0;
+    const tssOk = document.getElementById('tssInput').value.trim().length>0;
+    const nameOk = card.querySelector('#userNameInput').value.trim().length>0;
+    const answeredCount = Object.keys(session.answers).length;
+    card.querySelector('#submitBtn').disabled = !(distOk && tssOk && nameOk && answeredCount===qs.length);
+  }
+  card.querySelector('#userNameInput').addEventListener('input', e=>{ session.userName=e.target.value; checkComplete(); });
+  card.querySelector('#feedbackInput').addEventListener('input', e=>{ session.feedback=e.target.value; });
+
+  card.querySelector('#submitBtn').onclick = async ()=>{
+    session.distributor = document.getElementById('distInput').value.trim();
+    session.tssName = document.getElementById('tssInput').value.trim();
+    const btn = card.querySelector('#submitBtn');
+    btn.disabled = true; btn.textContent = "جمع ہو رہا ہے...";
+    const entry = {
+      id: uid(), distributor: session.distributor, tssName: session.tssName, role: role,
+      userName: session.userName.trim(),
+      answers: qs.map((q,i)=>({q:q.en, qUr:q.ur, score:session.answers[i]})),
+      feedback: session.feedback.trim(), ts: new Date().toISOString()
+    };
+    const ok = await insertSubmission(entry);
+    if(ok){
+      if(role==="OB") progress.OB += 1; else progress[role] = true;
+      showToast('کامیابی سے جمع ہوگیا / Submitted successfully');
+      session.role = null; session.userName=""; session.answers={}; session.feedback="";
+      renderRoleTabs(); renderQuestionCard();
+    }else{
+      showToast('خرابی، دوبارہ کوشش کریں / Error, please retry');
+      btn.disabled=false; btn.textContent="جمع کروائیں / Submit";
+    }
+  };
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderRoleTabs();
+  ['distInput','tssInput'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', ()=>{
+      const dist = document.getElementById('distInput').value.trim();
+      if(dist !== session.distributor && session.distributor!==""){ progress = {KPO:false, DIST:false, OB:0, TSS:false}; renderRoleTabs(); }
+      session.distributor = dist;
+      session.tssName = document.getElementById('tssInput').value.trim();
+      const ctx = document.getElementById('ctxDist'); if(ctx) ctx.textContent = dist || '—';
+      const btn = document.getElementById('submitBtn');
+      if(btn){
+        const nameOk = document.getElementById('userNameInput') ? document.getElementById('userNameInput').value.trim().length>0 : false;
+        const answeredCount = Object.keys(session.answers).length;
+        const qCount = session.role ? QUESTIONS[session.role].length : 0;
+        btn.disabled = !(dist && session.tssName && nameOk && answeredCount===qCount);
+      }
+    });
+  });
+});
+
+/* ================= ADMIN ================= */
+function openAdminModal(){
+  document.getElementById('adminModal').style.display='block';
+  document.getElementById('pinInput').value='';
+  document.getElementById('pinErr').textContent='';
+  setTimeout(()=>document.getElementById('pinInput').focus(),50);
+}
+function closeAdminModal(){ document.getElementById('adminModal').style.display='none'; }
+function checkPin(){
+  const v = document.getElementById('pinInput').value;
+  if(v===ADMIN_PIN){
+    closeAdminModal();
+    document.getElementById('formScreen').style.display='none';
+    document.getElementById('adminView').style.display='block';
+    renderAdmin();
+  }else{
+    document.getElementById('pinErr').textContent='غلط PIN / Incorrect PIN';
+  }
+}
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter' && document.getElementById('adminModal').style.display==='block'){ checkPin(); }
+});
+function exitAdmin(){
+  document.getElementById('adminView').style.display='none';
+  document.getElementById('formScreen').style.display='block';
+}
+
+let adminFilterDist = "ALL";
+let adminFilterRole = "ALL";
+
+async function renderAdmin(){
+  const shell = document.getElementById('adminShell');
+  shell.innerHTML = `<div class="empty-note">Loading dashboard…</div>`;
+  const all = await loadSubmissions();
+
+  const distributors = [...new Set(all.map(s=>s.distributor))].sort();
+  const filtered = all.filter(s =>
+    (adminFilterDist==="ALL" || s.distributor===adminFilterDist) &&
+    (adminFilterRole==="ALL" || s.role===adminFilterRole)
+  );
+
+  const totalSubs = all.length;
+  const totalDist = distributors.length;
+  const allScores = all.flatMap(s=>s.answers.map(a=>a.score));
+  const overallAvg = allScores.length ? (allScores.reduce((a,b)=>a+b,0)/allScores.length) : 0;
+  const feedbackCount = all.filter(s=>s.feedback && s.feedback.length>0).length;
+
+  shell.innerHTML = "";
+  shell.appendChild(el(`
+    <div class="admin-top">
+      <h1>TLX Wave 1 — Head Office Dashboard</h1>
+      <div class="admin-actions">
+        <button class="btn btn-ghost" id="refreshBtn">↻ Refresh</button>
+        <button class="btn btn-gold" id="exportAllBtn">⭳ Export All (CSV)</button>
+        <button class="btn btn-ghost" id="exitAdminBtn">Exit to Form</button>
+      </div>
+    </div>
+  `));
+  shell.querySelector('#refreshBtn').onclick = renderAdmin;
+  shell.querySelector('#exitAdminBtn').onclick = exitAdmin;
+  shell.querySelector('#exportAllBtn').onclick = ()=>exportCSV(all, "TLX_CSAT_All_Submissions.csv");
+
+  const kpiRow = el(`<div class="kpi-row"></div>`);
+  [
+    [totalSubs, "Total Submissions"],
+    [totalDist, "Distributors Covered"],
+    [overallAvg.toFixed(2)+" / 5", "Overall Avg. Satisfaction"],
+    [feedbackCount, "Open Comments Received"]
+  ].forEach(([v,l])=>kpiRow.appendChild(el(`<div class="kpi"><div class="val">${v}</div><div class="lbl">${l}</div></div>`)));
+  shell.appendChild(kpiRow);
+
+  if(totalSubs===0){
+    shell.appendChild(el(`<div class="admin-section"><div class="empty-note">No submissions yet.</div></div>`));
+    return;
+  }
+
+  const covSection = el(`<div class="admin-section"><h2>Distributor Coverage</h2></div>`);
+  const covTable = el(`
+    <table class="admin-table">
+      <thead><tr><th>Distributor</th><th>KPO</th><th>Distributor Rep</th><th>Order Bookers</th><th>TSS</th><th>Avg Score</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  `);
+  const tbody = covTable.querySelector('tbody');
+  distributors.forEach(d=>{
+    const rows = all.filter(s=>s.distributor===d);
+    const has = k => rows.some(r=>r.role===k) ? '✓' : '—';
+    const obCount = rows.filter(r=>r.role==='OB').length;
+    const scores = rows.flatMap(r=>r.answers.map(a=>a.score));
+    const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2) : '—';
+    tbody.appendChild(el(`<tr><td><b>${d}</b></td><td>${has('KPO')}</td><td>${has('DIST')}</td><td>${obCount}</td><td>${has('TSS')}</td><td>${avg}</td></tr>`));
+  });
+  covSection.appendChild(covTable);
+  shell.appendChild(covSection);
+
+  const filterSection = el(`<div class="admin-section"><h2>Filter Detailed Data</h2><div class="filters"></div></div>`);
+  const filterBar = filterSection.querySelector('.filters');
+  const distSel = el(`<select id="distSel"><option value="ALL">All Distributors</option>${distributors.map(d=>`<option value="${d}" ${d===adminFilterDist?'selected':''}>${d}</option>`).join('')}</select>`);
+  const roleSel = el(`<select id="roleSel"><option value="ALL">All Roles</option>${Object.keys(ROLE_LABELS).map(k=>`<option value="${k}" ${k===adminFilterRole?'selected':''}>${ROLE_LABELS[k].en}</option>`).join('')}</select>`);
+  distSel.onchange = e=>{ adminFilterDist=e.target.value; renderAdmin(); };
+  roleSel.onchange = e=>{ adminFilterRole=e.target.value; renderAdmin(); };
+  filterBar.appendChild(distSel); filterBar.appendChild(roleSel);
+  const exportFilteredBtn = el(`<button class="btn btn-ghost" style="padding:8px 14px;font-size:13px;">⭳ Export Filtered</button>`);
+  exportFilteredBtn.onclick = ()=>exportCSV(filtered, "TLX_CSAT_Filtered.csv");
+  filterBar.appendChild(exportFilteredBtn);
+  shell.appendChild(filterSection);
+
+  const rolesToShow = adminFilterRole==="ALL" ? Object.keys(ROLE_LABELS) : [adminFilterRole];
+  const qSection = el(`<div class="admin-section"><h2>Question-Level Averages</h2></div>`);
+  rolesToShow.forEach(roleKey=>{
+    const roleSubs = filtered.filter(s=>s.role===roleKey);
+    if(roleSubs.length===0) return;
+    const block = el(`<div style="margin-bottom:18px;"><div style="font-family:'Poppins',sans-serif;font-size:13px;color:var(--navy);margin-bottom:8px;">${ROLE_LABELS[roleKey].en} <span style="color:var(--ink-soft);font-weight:400;">(${roleSubs.length} responses)</span></div></div>`);
+    QUESTIONS[roleKey].forEach((q,i)=>{
+      const scores = roleSubs.map(s=>s.answers[i]?.score).filter(v=>v!==undefined);
+      const avg = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : 0;
+      const pct = (avg/5*100).toFixed(0);
+      const color = avg<3 ? 'var(--red)' : avg<4 ? 'var(--amber)' : 'var(--green)';
+      block.appendChild(el(`
+        <div class="barrow">
+          <div class="qline"><span>${i+1}. ${q.en}</span><b>${avg.toFixed(2)}</b></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color};"></div></div>
+        </div>
+      `));
+    });
+    qSection.appendChild(block);
+  });
+  shell.appendChild(qSection);
+
+  const respSection = el(`<div class="admin-section"><h2>Individual Responses (${filtered.length})</h2></div>`);
+  const respTable = el(`
+    <table class="admin-table">
+      <thead><tr><th>Date</th><th>Distributor</th><th>Role</th><th>Name</th><th>TSS</th><th>Avg Score</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  `);
+  const respBody = respTable.querySelector('tbody');
+  [...filtered].sort((a,b)=>new Date(b.ts)-new Date(a.ts)).forEach(s=>{
+    const scores = s.answers.map(a=>a.score);
+    const avg = (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2);
+    respBody.appendChild(el(`
+      <tr>
+        <td>${new Date(s.ts).toLocaleDateString()}</td>
+        <td>${s.distributor}</td>
+        <td><span class="pill ${s.role}">${ROLE_LABELS[s.role].en}</span></td>
+        <td>${s.userName}</td>
+        <td>${s.tssName}</td>
+        <td>${avg}</td>
+      </tr>
+    `));
+  });
+  respSection.appendChild(respTable);
+  shell.appendChild(respSection);
+
+  const fbSection = el(`<div class="admin-section"><h2>Raw Feedback / Open Comments</h2></div>`);
+  const fbItems = filtered.filter(s=>s.feedback && s.feedback.length>0);
+  if(fbItems.length===0){
+    fbSection.appendChild(el(`<div class="empty-note">No open comments for this filter.</div>`));
+  }else{
+    [...fbItems].sort((a,b)=>new Date(b.ts)-new Date(a.ts)).forEach(s=>{
+      fbSection.appendChild(el(`
+        <div class="feedback-item">
+          <div class="meta"><span class="pill ${s.role}">${ROLE_LABELS[s.role].en}</span> <b>${s.userName}</b> · ${s.distributor} · ${new Date(s.ts).toLocaleDateString()}</div>
+          <div class="txt">${s.feedback}</div>
+        </div>
+      `));
+    });
+  }
+  shell.appendChild(fbSection);
+}
+
+function exportCSV(rows, filename){
+  if(!rows.length){ showToast('No data to export'); return; }
+  const header = ["Date","Distributor","TSS Name","Role","User Name","Question No","Question (EN)","Score","Feedback"];
+  const lines = [header.join(",")];
+  rows.forEach(s=>{
+    s.answers.forEach((a,i)=>{
+      const rowVals = [
+        new Date(s.ts).toLocaleDateString(), s.distributor, s.tssName, ROLE_LABELS[s.role].en, s.userName,
+        i+1, a.q, a.score, i===0 ? (s.feedback||"") : ""
+      ].map(v=>`"${String(v).replace(/"/g,'""')}"`);
+      lines.push(rowVals.join(","));
+    });
+  });
+  const blob = new Blob(["\uFEFF"+lines.join("\n")], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
