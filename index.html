@@ -146,11 +146,17 @@
     <div class="card">
       <div class="top-grid">
         <div>
-          <label class="field-label">Distributor Name<span class="ur-sub">ڈسٹری بیوٹر کا نام</span></label>
+          <label for="distInput" class="field-label">
+    Distributor Name
+    <span class="ur-sub">ڈسٹری بیوٹر کا نام</span>
+</label>
           <input type="text" id="distInput" placeholder="ڈسٹری بیوٹر کا نام لکھیں">
         </div>
         <div>
-          <label class="field-label">Your Name <span class="ur-sub">آپ کا نام </span></label>
+          <label for="tssInput" class="field-label">
+    Your Name
+    <span class="ur-sub">آپ کا نام</span>
+</label>
           <input type="text" id="tssInput" placeholder="اپنا نام لکھیں">
         </div>
       </div>
@@ -328,12 +334,18 @@ function renderQuestionCard(){
         <span>Role: <b>${rl.en}</b></span>
       </div>
       <div style="margin-bottom:18px;">
-        <label class="field-label">Name of ${rl.en}<span class="ur-sub">${namePlaceholder}</span></label>
+        <label for="userNameInput" class="field-label">
+    Name of ${rl.en}
+    <span class="ur-sub">${namePlaceholder}</span>
+</label>
         <input type="text" id="userNameInput" placeholder="${namePlaceholder}">
       </div>
       <div id="qWrap"></div>
       <div style="margin-top:6px;">
-        <label class="field-label">Additional Comments (optional)<span class="ur-sub">اضافی رائے یا تجاویز (اختیاری)</span></label>
+        <label for="feedbackInput" class="field-label">
+    Additional Comments (optional)
+    <span class="ur-sub">اضافی رائے یا تجاویز (اختیاری)</span>
+</label>
         <textarea id="feedbackInput" placeholder="اپنی رائے یہاں لکھیں..." class="urdu"></textarea>
       </div>
       <div class="btn-row">
