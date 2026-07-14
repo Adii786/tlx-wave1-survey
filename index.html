@@ -63,7 +63,8 @@
   .qblock:last-of-type{border-bottom:none;}
   .qtext-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
   .qnum{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:700;font-family:'Inter',sans-serif;flex:none;}
-  .qtext{font-size:16.5px;flex:1;}
+  .qtext{font-size:16.5px;}
+  .qtext-en{font-size:12px;color:var(--ink-soft);margin-top:3px;font-family:'Inter',sans-serif;}
   .scale{display:flex;gap:6px;}
   .scale-opt{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 3px 10px;border:1.5px solid var(--line);border-radius:10px;background:#fbfaf7;cursor:pointer;}
   .scale-opt:hover{border-color:var(--gold);}
@@ -186,8 +187,8 @@
       provided separately (see setup notes).
    3. Project Settings → API → paste your Project URL and anon public key below.
 ====================================================== */
-const SUPABASE_URL = "https://kpfixagyaahynhielasw.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwZml4YWd5YWFoeW5oaWVsYXN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwMDUyNjcsImV4cCI6MjA5OTU4MTI2N30.4FY2Zyclz7XRoDsc94GmdMVSbF-4KPplK75k64h5i2c";
+const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 const TABLE = "tlx_csat_submissions";
 const supabaseClient = (SUPABASE_URL.startsWith("http"))
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -204,40 +205,40 @@ const ROLE_LABELS = {
 
 const QUESTIONS = {
   KPO: [
-    {ur:"کیا آپ TLX سسٹم میں آرڈرز کے اجراء اور تصفیے کے عمل سے مطمئن ہیں؟", en:"Satisfaction with order issuance & settlement process"},
-    {ur:"کیا TLX سافٹ ویئر آپ کے روزمرہ آپریشنل کاموں کو مکمل کرنے کے لیے صارف دوست ہے؟", en:"TLX software user-friendliness for daily operations"},
-    {ur:"کیا آپ TLX سسٹم میں ادائیگی اور وصولی کے عمل سے مطمئن ہیں؟", en:"Satisfaction with payments & collection process"},
-    {ur:"کیا آپ کو سوالات/مسائل پر بروقت جواب ملتا ہے؟", en:"Timeliness of response on queries/issues"},
-    {ur:"کیا آپ سسٹم میں دستیاب رپورٹس سے مطمئن ہیں اور یہ آپ کی آپریشنل ضروریات پوری کرتی ہیں؟", en:"Satisfaction with reports fulfilling operational needs"},
-    {ur:"کیا آپ سسٹم اپ گریڈ اور نئی تبدیلیوں کے بروقت اپڈیٹس سے مطمئن ہیں؟", en:"Satisfaction with timely updates on system upgrades/changes"},
-    {ur:"کیا آپ TLX سسٹم میں پرچیز آرڈر، بک آرڈر اور وصولی کے عمل سے مطمئن ہیں؟", en:"Satisfaction with PO, book order & receiving process"},
-    {ur:"کیا آپ TLX سسٹم میں مسائل کے حل اور مسائل کے دوبارہ پیش آنے کی صورتحال سے مطمئن ہیں؟", en:"Satisfaction with issue resolution & recurrence handling"},
-    {ur:"کیا آپ سیلز ریٹرن کے عمل اور کسٹمر لیجر کے تصفیے سے مطمئن ہیں؟", en:"Satisfaction with sales return process & ledger settlement"}
+    {ur:"کیا آپ TLX میں آرڈر بننے اور مکمل ہونے کے عمل سے مطمئن ہیں؟", en:"Order issuance & settlement process"},
+    {ur:"کیا TLX سافٹ ویئر استعمال میں آسان ہے؟", en:"TLX software is user-friendly"},
+    {ur:"کیا آپ پیمنٹ اور وصولی کے عمل سے مطمئن ہیں؟", en:"Payments & collection process"},
+    {ur:"کیا مسئلے یا سوال پر بروقت جواب ملتا ہے؟", en:"Timely response on queries/issues"},
+    {ur:"کیا سسٹم کی رپورٹس آپ کے روزمرہ کام میں مددگار ہیں؟", en:"Reports fulfil your operational needs"},
+    {ur:"کیا سسٹم میں نئی تبدیلیوں کی بروقت اطلاع ملتی ہے؟", en:"Timely update about system upgrades/changes"},
+    {ur:"کیا پرچیز آرڈر اور مال کی وصولی کا عمل ٹھیک چلتا ہے؟", en:"Purchase order & GRN (receiving) process"},
+    {ur:"کیا مسئلے حل ہو جاتے ہیں اور دوبارہ نہیں آتے؟", en:"Issues get resolved and don't repeat"},
+    {ur:"کیا سیل ریٹرن اور کسٹمر لیجر درست رہتا ہے؟", en:"Sales return process & ledger settlement"}
   ],
   DIST: [
-    {ur:"کیا آپ TLX سافٹ ویئر کے استعمال سے مطمئن ہیں؟ کیا نفاذ کے بعد آپ کے آپریشنز میں بہتری آئی ہے؟", en:"Overall satisfaction using TLX / smoother operations"},
-    {ur:"کیا آپ سسٹم میں اسٹاک پوزیشن سے مطمئن ہیں؟ کیا یہ آپ کے فزیکل اسٹاک سے میچ کرتا ہے؟", en:"Satisfaction with stock position accuracy vs physical"},
-    {ur:"کیا آپ سسٹم میں کسٹمر لیجر سے مطمئن ہیں؟ کیا یہ مارکیٹ سے آؤٹ اسٹینڈنگ اور ریکوری میں مددگار ہے؟", en:"Satisfaction with customer ledger helping outstanding/recovery"},
-    {ur:"کیا آپ سسٹم میں دستیاب رپورٹس سے مطمئن ہیں؟ کیا یہ آپریشنز، ایف بی آر جمع کرانے یا ROI ڈیٹا میں مددگار ہیں؟", en:"Satisfaction with reports (operations/FBR/ROI)"},
-    {ur:"کیا اس سسٹم کے نفاذ کے بعد آپ کے کام اور آپریشنل معاملات میں کارکردگی بہتر ہوئی ہے؟", en:"Efficiency improvement after implementation"},
-    {ur:"آپ سسٹم پر کتنا انحصار کرتے ہیں؟ کیا ڈیٹا قابلِ اعتماد ہے اور آپ اسے مکمل استعمال کر رہے ہیں؟", en:"System dependency & data reliability/utilization"}
+    {ur:"کیا TLX استعمال کرنے سے آپ کا کام آسان ہوا ہے؟", en:"Overall satisfaction / smoother operations after TLX"},
+    {ur:"کیا سسٹم کا اسٹاک آپ کے اصل (فزیکل) اسٹاک سے ملتا ہے؟", en:"System stock matches physical stock"},
+    {ur:"کیا کسٹمر لیجر آپ کی ریکوری اور آؤٹ سٹینڈنگ میں مددگار ہے؟", en:"Customer ledger helps in outstanding/recovery"},
+    {ur:"کیا سسٹم کی رپورٹس مفید ہیں؟ (جیسے FBR یا ROI کے لیے)", en:"Reports useful for FBR/ROI/operations"},
+    {ur:"کیا سسٹم لگنے کے بعد آپ کے کام میں بہتری آئی ہے؟", en:"Efficiency improved after implementation"},
+    {ur:"کیا آپ سسٹم کے ڈیٹا پر بھروسہ کرتے ہیں اور اسے مکمل استعمال کرتے ہیں؟", en:"Data is reliable and fully utilized"}
   ],
   OB: [
-    {ur:"کیا آپ ایپلیکیشن کے ذریعے آرڈر لینے کے عمل سے مطمئن ہیں؟", en:"Satisfaction with order taking process via app"},
-    {ur:"کیا آپ ایپلیکیشن میں لائیو اسٹاک کی درستگی سے مطمئن ہیں؟", en:"Accuracy of live stock visibility in app"},
-    {ur:"کیا آرڈرز بروقت ایپلیکیشن سے سنک ہوتے ہیں؟", en:"Timeliness of order sync from app"},
-    {ur:"کیا آپ ایپلیکیشن کی کارکردگی سے مطمئن ہیں؟ (سست روی، پراڈکٹ لوڈنگ، ایپ کریش وغیرہ)", en:"App performance (slowness/loading/crash)"},
-    {ur:"کیا آپ ایپلیکیشن میں دستیاب رپورٹس سے مطمئن ہیں؟ (روزانہ یا MTD پیش رفت)", en:"Satisfaction with available reports (daily/MTD progress)"},
-    {ur:"کیا آپ ایپ میں PJP یا دکانوں کے ظاہر ہونے سے مطمئن ہیں؟", en:"Satisfaction with PJP/shops appearing in app"},
-    {ur:"کیا آپ ایپ کے استحکام سے مطمئن ہیں؟", en:"Satisfaction with app stability"}
+    {ur:"کیا ایپلیکیشن میں آرڈر لینے کا طریقہ آسان ہے؟", en:"Order taking process via app"},
+    {ur:"کیا ایپ میں اسٹاک صحیح دکھتا ہے؟", en:"Accuracy of live stock in app"},
+    {ur:"کیا آرڈر فوراً سسٹم میں چلا جاتا ہے؟", en:"Orders sync on time from app"},
+    {ur:"کیا ایپ ٹھیک چلتی ہے؟ (سست روی، ہینگ یا کریش نہیں ہوتی)", en:"App performance (no slowness/crashes)"},
+    {ur:"کیا ایپ میں رپورٹس (روزانہ/ماہانہ پیش رفت) نظر آتی ہیں؟", en:"Reports available (daily/MTD progress)"},
+    {ur:"کیا PJP اور دکانیں ایپ میں ٹھیک نظر آتی ہیں؟", en:"PJP/shops appear correctly in app"},
+    {ur:"کیا ایپ مستحکم ہے، بار بار بند نہیں ہوتی؟", en:"App stability"}
   ],
   TSS: [
-    {ur:"کیا آپ TLX سافٹ ویئر کی مجموعی کارکردگی، بھروسے اور ڈیٹا کی درستگی سے مطمئن ہیں؟", en:"Overall TLX performance, reliability, data accuracy"},
-    {ur:"کیا آپ سوالات/مسائل کے حل اور بروقت جواب سے مطمئن ہیں؟", en:"Resolution & timely response of queries/issues"},
-    {ur:"کیا آپ سسٹم رپورٹس سے مطمئن ہیں جو سیلز تجزیے، ٹیم مانیٹرنگ اور ڈسٹری بیوٹر ROI میں مددگار ہوں؟", en:"System reports helpful for sales analytics/team monitoring/distributor ROI"},
-    {ur:"کیا آپ سسٹم میں اسٹاک پوزیشن اور کسٹمر لیجرز سے مطمئن ہیں؟", en:"Satisfaction with stock position & customer ledgers"},
-    {ur:"کیا آپ نئی دکان کھولنے اور ٹیگنگ کے عمل سے مطمئن ہیں؟", en:"Satisfaction with new shop opening & tagging process"},
-    {ur:"کیا آپ TLX سسٹم کے پرچیز آرڈر اور منظوری کے عمل سے مطمئن ہیں؟", en:"Satisfaction with PO & approval process"}
+    {ur:"کیا TLX سسٹم مجموعی طور پر ٹھیک اور بھروسے کے قابل چلتا ہے؟", en:"Overall performance, reliability, data accuracy"},
+    {ur:"کیا مسائل بروقت اور جلدی حل ہوتے ہیں؟", en:"Resolution & timely response of issues"},
+    {ur:"کیا رپورٹس سیلز کے تجزیے اور ٹیم کی کارکردگی دیکھنے میں مدد دیتی ہیں؟", en:"Reports help sales analytics/team monitoring/ROI"},
+    {ur:"کیا اسٹاک پوزیشن اور کسٹمر لیجر درست ہیں؟", en:"Stock position & customer ledgers are accurate"},
+    {ur:"کیا نئی دکان کھولنے اور ٹیگ کرنے کا عمل آسان ہے؟", en:"New shop opening & tagging process"},
+    {ur:"کیا پرچیز آرڈر کی منظوری آسانی سے ہوتی ہے؟", en:"Purchase order & approval process"}
   ]
 };
 
@@ -349,7 +350,10 @@ function renderQuestionCard(){
       <div class="qblock">
         <div class="qtext-row">
           <div class="qnum">${i+1}</div>
-          <div class="qtext urdu">${q.ur}</div>
+          <div style="flex:1;">
+            <div class="qtext urdu">${q.ur}</div>
+            <div class="qtext-en">${q.en}</div>
+          </div>
         </div>
         <div class="scale" data-qidx="${i}"></div>
       </div>
@@ -475,14 +479,16 @@ async function renderAdmin(){
       <h1>TLX Wave 1 — Head Office Dashboard</h1>
       <div class="admin-actions">
         <button class="btn btn-ghost" id="refreshBtn">↻ Refresh</button>
-        <button class="btn btn-gold" id="exportAllBtn">⭳ Export All (CSV)</button>
+        <button class="btn btn-ghost" id="exportSummaryBtn">⭳ Summary (Distributor × Role)</button>
+        <button class="btn btn-gold" id="exportAllBtn">⭳ Detailed (All)</button>
         <button class="btn btn-ghost" id="exitAdminBtn">Exit to Form</button>
       </div>
     </div>
   `));
   shell.querySelector('#refreshBtn').onclick = renderAdmin;
   shell.querySelector('#exitAdminBtn').onclick = exitAdmin;
-  shell.querySelector('#exportAllBtn').onclick = ()=>exportCSV(all, "TLX_CSAT_All_Submissions.csv");
+  shell.querySelector('#exportAllBtn').onclick = ()=>exportCSV(all, "TLX_CSAT_Detailed.csv");
+  shell.querySelector('#exportSummaryBtn').onclick = ()=>exportSummaryCSV(all, distributors);
 
   const kpiRow = el(`<div class="kpi-row"></div>`);
   [
@@ -498,24 +504,57 @@ async function renderAdmin(){
     return;
   }
 
-  const covSection = el(`<div class="admin-section"><h2>Distributor Coverage</h2></div>`);
+  const covSection = el(`<div class="admin-section"><h2>Distributor-wise Summary</h2></div>`);
   const covTable = el(`
     <table class="admin-table">
-      <thead><tr><th>Distributor</th><th>KPO</th><th>Distributor Rep</th><th>Order Bookers</th><th>TSS</th><th>Avg Score</th></tr></thead>
+      <thead><tr><th>#</th><th>Distributor</th><th>KPO</th><th>Distributor Rep</th><th>Order Bookers</th><th>TSS</th><th>Responses</th><th>Avg Score</th></tr></thead>
       <tbody></tbody>
     </table>
   `);
   const tbody = covTable.querySelector('tbody');
-  distributors.forEach(d=>{
+  const distSummaries = distributors.map(d=>{
     const rows = all.filter(s=>s.distributor===d);
-    const has = k => rows.some(r=>r.role===k) ? '✓' : '—';
-    const obCount = rows.filter(r=>r.role==='OB').length;
     const scores = rows.flatMap(r=>r.answers.map(a=>a.score));
-    const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2) : '—';
-    tbody.appendChild(el(`<tr><td><b>${d}</b></td><td>${has('KPO')}</td><td>${has('DIST')}</td><td>${obCount}</td><td>${has('TSS')}</td><td>${avg}</td></tr>`));
+    const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
+    return { d, rows, obCount: rows.filter(r=>r.role==='OB').length, avg, respCount: rows.length };
+  }).sort((a,b)=> b.avg - a.avg);
+  distSummaries.forEach((s,idx)=>{
+    const has = k => s.rows.some(r=>r.role===k) ? '✓' : '—';
+    const pillColor = s.avg===0 ? '#999' : s.avg<3 ? 'var(--red)' : s.avg<4 ? 'var(--amber)' : 'var(--green)';
+    tbody.appendChild(el(`<tr><td>${idx+1}</td><td><b>${s.d}</b></td><td>${has('KPO')}</td><td>${has('DIST')}</td><td>${s.obCount}</td><td>${has('TSS')}</td><td>${s.respCount}</td><td><span class="pill" style="background:${pillColor};color:#fff;">${s.avg?s.avg.toFixed(2):'—'}</span></td></tr>`));
   });
   covSection.appendChild(covTable);
   shell.appendChild(covSection);
+
+  // Top Concerns — lowest scoring questions across the current filter, biggest gaps first
+  const concernSection = el(`<div class="admin-section"><h2>Areas Needing Attention</h2></div>`);
+  const concernRows = [];
+  Object.keys(ROLE_LABELS).forEach(roleKey=>{
+    const roleSubs = filtered.filter(s=>s.role===roleKey);
+    if(roleSubs.length===0) return;
+    QUESTIONS[roleKey].forEach((q,i)=>{
+      const scores = roleSubs.map(s=>s.answers[i]?.score).filter(v=>v!==undefined);
+      if(!scores.length) return;
+      const avg = scores.reduce((a,b)=>a+b,0)/scores.length;
+      concernRows.push({role:roleKey, q:q.en, avg, n:scores.length});
+    });
+  });
+  concernRows.sort((a,b)=>a.avg-b.avg);
+  const worst = concernRows.slice(0,5);
+  if(worst.length===0){
+    concernSection.appendChild(el(`<div class="empty-note">Not enough data yet to surface concerns.</div>`));
+  }else{
+    worst.forEach(w=>{
+      const color = w.avg<3 ? 'var(--red)' : w.avg<4 ? 'var(--amber)' : 'var(--green)';
+      concernSection.appendChild(el(`
+        <div class="barrow">
+          <div class="qline"><span><span class="pill ${w.role}">${ROLE_LABELS[w.role].en}</span> ${w.q} <span style="color:var(--ink-soft);">(${w.n} responses)</span></span><b style="color:${color};">${w.avg.toFixed(2)}</b></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(w.avg/5*100).toFixed(0)}%;background:${color};"></div></div>
+        </div>
+      `));
+    });
+  }
+  shell.appendChild(concernSection);
 
   const filterSection = el(`<div class="admin-section"><h2>Filter Detailed Data</h2><div class="filters"></div></div>`);
   const filterBar = filterSection.querySelector('.filters');
@@ -551,25 +590,27 @@ async function renderAdmin(){
   });
   shell.appendChild(qSection);
 
-  const respSection = el(`<div class="admin-section"><h2>Individual Responses (${filtered.length})</h2></div>`);
+  const respSection = el(`<div class="admin-section"><h2>Response Log (${filtered.length})</h2></div>`);
   const respTable = el(`
     <table class="admin-table">
-      <thead><tr><th>Date</th><th>Distributor</th><th>Role</th><th>Name</th><th>TSS</th><th>Avg Score</th></tr></thead>
+      <thead><tr><th>#</th><th>Date</th><th>Distributor</th><th>Role</th><th>Name</th><th>TSS</th><th>Avg Score</th></tr></thead>
       <tbody></tbody>
     </table>
   `);
   const respBody = respTable.querySelector('tbody');
-  [...filtered].sort((a,b)=>new Date(b.ts)-new Date(a.ts)).forEach(s=>{
+  [...filtered].sort((a,b)=>new Date(b.ts)-new Date(a.ts)).forEach((s,idx)=>{
     const scores = s.answers.map(a=>a.score);
-    const avg = (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2);
+    const avgNum = scores.reduce((a,b)=>a+b,0)/scores.length;
+    const color = avgNum<3 ? 'var(--red)' : avgNum<4 ? 'var(--amber)' : 'var(--green)';
     respBody.appendChild(el(`
       <tr>
+        <td>${idx+1}</td>
         <td>${new Date(s.ts).toLocaleDateString()}</td>
         <td>${s.distributor}</td>
         <td><span class="pill ${s.role}">${ROLE_LABELS[s.role].en}</span></td>
         <td>${s.userName}</td>
         <td>${s.tssName}</td>
-        <td>${avg}</td>
+        <td><span class="pill" style="background:${color};color:#fff;">${avgNum.toFixed(2)}</span></td>
       </tr>
     `));
   });
@@ -591,6 +632,32 @@ async function renderAdmin(){
     });
   }
   shell.appendChild(fbSection);
+}
+
+function exportSummaryCSV(all, distributors){
+  if(!all.length){ showToast('No data to export'); return; }
+  const roleKeys = Object.keys(ROLE_LABELS);
+  const header = ["#","Distributor", ...roleKeys.map(k=>ROLE_LABELS[k].en+" Avg"), ...roleKeys.map(k=>ROLE_LABELS[k].en+" Responses"), "Overall Avg", "Total Responses"];
+  const lines = [header.join(",")];
+  distributors.forEach((d,idx)=>{
+    const rows = all.filter(s=>s.distributor===d);
+    const roleAvgs = roleKeys.map(k=>{
+      const rr = rows.filter(r=>r.role===k);
+      const sc = rr.flatMap(r=>r.answers.map(a=>a.score));
+      return sc.length ? (sc.reduce((a,b)=>a+b,0)/sc.length).toFixed(2) : "";
+    });
+    const roleCounts = roleKeys.map(k=> rows.filter(r=>r.role===k).length);
+    const allScores = rows.flatMap(r=>r.answers.map(a=>a.score));
+    const overallAvg = allScores.length ? (allScores.reduce((a,b)=>a+b,0)/allScores.length).toFixed(2) : "";
+    const vals = [idx+1, d, ...roleAvgs, ...roleCounts, overallAvg, rows.length].map(v=>`"${String(v).replace(/"/g,'""')}"`);
+    lines.push(vals.join(","));
+  });
+  const blob = new Blob(["\uFEFF"+lines.join("\n")], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = "TLX_CSAT_Summary_by_Distributor.csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
 }
 
 function exportCSV(rows, filename){
