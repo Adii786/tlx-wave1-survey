@@ -187,8 +187,8 @@
       provided separately (see setup notes).
    3. Project Settings → API → paste your Project URL and anon public key below.
 ====================================================== */
-const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_URL = "https://kpfixagyaahynhielasw.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwZml4YWd5YWFoeW5oaWVsYXN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwMDUyNjcsImV4cCI6MjA5OTU4MTI2N30.4FY2Zyclz7XRoDsc94GmdMVSbF-4KPplK75k64h5i2c";
 const TABLE = "tlx_csat_submissions";
 const supabaseClient = (SUPABASE_URL.startsWith("http"))
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
